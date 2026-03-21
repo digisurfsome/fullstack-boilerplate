@@ -4,6 +4,7 @@ import 'package:apparence_kit/core/rating/widgets/rate_banner.dart';
 import 'package:apparence_kit/core/theme/extensions/theme_extension.dart';
 import 'package:apparence_kit/modules/home/home_page.dart';
 import 'package:apparence_kit/modules/notifications/ui/notifications_page.dart';
+import 'package:apparence_kit/modules/practitioner/ui/practitioner_home_page.dart';
 import 'package:apparence_kit/modules/settings/settings_page.dart';
 import 'package:bart/bart.dart';
 import 'package:flutter/material.dart';
@@ -19,10 +20,10 @@ List<BartMenuRoute> subRoutes() {
       transitionsBuilder: bottomBarTransition,
     ),
     BartMenuRoute.bottomBar(
-      label: "My wishlist",
-      icon: Icons.favorite,
-      path: 'wishlist',
-      pageBuilder: (_, _, settings) => const PageFake(),
+      label: "Practitioner",
+      icon: Icons.psychology,
+      path: 'practitioner',
+      pageBuilder: (_, _, settings) => const PractitionerHomePage(),
       transitionDuration: bottomBarTransitionDuration,
       transitionsBuilder: bottomBarTransition,
     ),

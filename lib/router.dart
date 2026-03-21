@@ -10,6 +10,10 @@ import 'package:apparence_kit/modules/authentication/ui/signup_page.dart';
 import 'package:apparence_kit/modules/feedbacks/ui/component/add_feature_form.dart';
 import 'package:apparence_kit/modules/feedbacks/ui/feedback_page.dart';
 import 'package:apparence_kit/modules/onboarding/ui/onboarding_page.dart';
+import 'package:apparence_kit/modules/practitioner/models/submodality_profile.dart';
+import 'package:apparence_kit/modules/practitioner/ui/components/profile_assessment_page.dart';
+import 'package:apparence_kit/modules/practitioner/ui/components/session_player_page.dart';
+import 'package:apparence_kit/modules/practitioner/ui/components/technique_detail_page.dart';
 import 'package:apparence_kit/modules/subscription/ui/premium_page.dart';
 
 import 'package:flutter/material.dart';
@@ -90,6 +94,41 @@ GoRouter generateRouter({
         name: 'recover_password',
         path: '/recover_password',
         builder: (context, state) => const RecoverPasswordPage(),
+      ),
+      GoRoute(
+        name: 'practitioner_profile_positive',
+        path: '/practitioner/profile/positive',
+        builder: (context, state) => const ProfileAssessmentPage(
+          profileType: ProfileType.positive,
+        ),
+      ),
+      GoRoute(
+        name: 'practitioner_profile_negative',
+        path: '/practitioner/profile/negative',
+        builder: (context, state) => const ProfileAssessmentPage(
+          profileType: ProfileType.negative,
+        ),
+      ),
+      GoRoute(
+        name: 'practitioner_technique',
+        path: '/practitioner/technique/:id',
+        builder: (context, state) => TechniqueDetailPage(
+          techniqueId: state.pathParameters['id']!,
+        ),
+      ),
+      GoRoute(
+        name: 'practitioner_session',
+        path: '/practitioner/session',
+        builder: (context, state) => SessionPlayerPage(
+          techniqueId: state.uri.queryParameters['techniqueId']!,
+          targetCategory: state.uri.queryParameters['category']!,
+          targetDescription: Uri.decodeComponent(
+            state.uri.queryParameters['target']!,
+          ),
+          desiredOutcome: Uri.decodeComponent(
+            state.uri.queryParameters['outcome']!,
+          ),
+        ),
       ),
       GoRoute(
         name: '404',

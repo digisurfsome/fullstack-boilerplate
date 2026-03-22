@@ -28,7 +28,7 @@ class SessionPlayerNotifier extends _$SessionPlayerNotifier {
     final userId = userState.user.idOrThrow;
     final technique = await techniqueRepo.getById(techniqueId);
     if (technique == null) {
-      throw Exception('Technique not found');
+      throw StateError('Technique $techniqueId not found');
     }
     final category = TargetCategory.values.firstWhere(
       (e) => e.name == targetCategory,

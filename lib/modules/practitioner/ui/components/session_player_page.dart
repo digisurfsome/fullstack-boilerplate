@@ -1,4 +1,5 @@
 import 'package:apparence_kit/core/theme/extensions/theme_extension.dart';
+import 'package:apparence_kit/modules/practitioner/models/practitioner_session.dart';
 import 'package:apparence_kit/modules/practitioner/models/technique.dart';
 import 'package:apparence_kit/modules/practitioner/providers/models/practitioner_state.dart';
 import 'package:apparence_kit/modules/practitioner/providers/session_player_notifier.dart';
@@ -219,12 +220,12 @@ class _SessionPlayerPageState extends ConsumerState<SessionPlayerPage> {
         return Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: ['health', 'financial', 'relationship', 'skill', 'craving', 'custom']
+          children: TargetCategory.values
               .map((cat) => ChoiceChip(
-                    label: Text(cat),
-                    selected: state.stepResponses['category'] == cat,
+                    label: Text(cat.name),
+                    selected: state.stepResponses['category'] == cat.name,
                     onSelected: (_) {
-                      _notifier.recordResponse('category', cat);
+                      _notifier.recordResponse('category', cat.name);
                     },
                   ))
               .toList(),
@@ -381,28 +382,19 @@ class _SessionPlayerPageState extends ConsumerState<SessionPlayerPage> {
     return Colors.red;
   }
 
-  String _tappingPointLabel(String point) {
-    switch (point) {
-      case 'eyebrow':
-        return 'Eyebrow Point';
-      case 'side_of_eye':
-        return 'Side of Eye';
-      case 'under_eye':
-        return 'Under Eye';
-      case 'under_nose':
-        return 'Under Nose';
-      case 'chin':
-        return 'Chin Point';
-      case 'collarbone':
-        return 'Collarbone';
-      case 'under_arm':
-        return 'Under Arm';
-      case 'top_of_head':
-        return 'Top of Head';
-      default:
-        return point;
-    }
-  }
+  static const _tappingPointLabels = {
+    'eyebrow': 'Eyebrow Point',
+    'side_of_eye': 'Side of Eye',
+    'under_eye': 'Under Eye',
+    'under_nose': 'Under Nose',
+    'chin': 'Chin Point',
+    'collarbone': 'Collarbone',
+    'under_arm': 'Under Arm',
+    'top_of_head': 'Top of Head',
+  };
+
+  String _tappingPointLabel(String point) =>
+      _tappingPointLabels[point] ?? point;
 
   void _showExitDialog(BuildContext context) {
     showDialog(

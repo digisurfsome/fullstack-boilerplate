@@ -81,8 +81,12 @@ sealed class Technique with _$Technique {
   }
 
   factory Technique.fromEntity(TechniqueEntity entity) {
+    final id = entity.id;
+    if (id == null) {
+      throw StateError('TechniqueEntity.id must not be null when converting to model');
+    }
     return Technique(
-      id: entity.id!,
+      id: id,
       name: entity.name,
       description: entity.description,
       category: TechniqueCategory.values.firstWhere(

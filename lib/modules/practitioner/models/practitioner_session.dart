@@ -56,8 +56,12 @@ sealed class PractitionerSession with _$PractitionerSession {
             ))
         .toList();
 
+    final id = entity.id;
+    if (id == null) {
+      throw StateError('SessionEntity.id must not be null when converting to model');
+    }
     return PractitionerSession(
-      id: entity.id!,
+      id: id,
       techniqueId: entity.techniqueId,
       targetCategory: TargetCategory.values.firstWhere(
         (e) => e.name == entity.targetCategory,

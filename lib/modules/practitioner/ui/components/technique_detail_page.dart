@@ -5,6 +5,15 @@ import 'package:apparence_kit/modules/practitioner/repositories/technique_reposi
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'technique_detail_page.g.dart';
+
+@riverpod
+Future<Technique?> techniqueDetail(Ref ref, String id) {
+  final repo = ref.read(techniqueRepositoryProvider);
+  return repo.getById(id);
+}
 
 class TechniqueDetailPage extends ConsumerStatefulWidget {
   final String techniqueId;
@@ -17,28 +26,9 @@ class TechniqueDetailPage extends ConsumerStatefulWidget {
 }
 
 class _TechniqueDetailPageState extends ConsumerState<TechniqueDetailPage> {
-  Technique? _technique;
-  bool _isLoading = true;
   final _targetController = TextEditingController();
   final _outcomeController = TextEditingController();
   TargetCategory _selectedCategory = TargetCategory.custom;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadTechnique();
-  }
-
-  Future<void> _loadTechnique() async {
-    final repo = ref.read(techniqueRepositoryProvider);
-    final technique = await repo.getById(widget.techniqueId);
-    if (mounted) {
-      setState(() {
-        _technique = technique;
-        _isLoading = false;
-      });
-    }
-  }
 
   @override
   void dispose() {
@@ -62,27 +52,42 @@ class _TechniqueDetailPageState extends ConsumerState<TechniqueDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Scaffold(
+    final techniqueAsync =
+        ref.watch(techniqueDetailProvider(widget.techniqueId));
+    return techniqueAsync.when(
+      loading: () => Scaffold(
         backgroundColor: context.colors.background,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
         body: const Center(child: CircularProgressIndicator()),
-      );
-    }
-    if (_technique == null) {
-      return Scaffold(
+      ),
+      error: (error, _) => Scaffold(
         backgroundColor: context.colors.background,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
-        body: const Center(child: Text('Technique not found')),
-      );
-    }
-    final technique = _technique!;
+        body: Center(child: Text('Error: $error')),
+      ),
+      data: (technique) {
+        if (technique == null) {
+          return Scaffold(
+            backgroundColor: context.colors.background,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+            ),
+            body: const Center(child: Text('Technique not found')),
+          );
+        }
+        return _buildContent(context, technique);
+      },
+    );
+  }
+
+  Widget _buildContent(BuildContext context, Technique technique) {
     return Scaffold(
       backgroundColor: context.colors.background,
       appBar: AppBar(
@@ -103,20 +108,24 @@ class _TechniqueDetailPageState extends ConsumerState<TechniqueDetailPage> {
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(Icons.timer_outlined, size: 16,
-                    color: context.colors.onBackground.withValues(alpha: 0.5)),
+                Icon(Icons.timer_outlined,
+                    size: 16,
+                    color:
+                        context.colors.onBackground.withValues(alpha: 0.5)),
                 const SizedBox(width: 4),
                 Text(
                   '${technique.durationMinutes} minutes',
                   style: context.textTheme.bodySmall?.copyWith(
-                    color: context.colors.onBackground.withValues(alpha: 0.5),
+                    color:
+                        context.colors.onBackground.withValues(alpha: 0.5),
                   ),
                 ),
                 const SizedBox(width: 16),
                 Text(
                   '${technique.protocol.length} steps',
                   style: context.textTheme.bodySmall?.copyWith(
-                    color: context.colors.onBackground.withValues(alpha: 0.5),
+                    color:
+                        context.colors.onBackground.withValues(alpha: 0.5),
                   ),
                 ),
               ],
@@ -137,8 +146,10 @@ class _TechniqueDetailPageState extends ConsumerState<TechniqueDetailPage> {
                 return ChoiceChip(
                   label: Text(cat.name),
                   selected: isSelected,
-                  onSelected: (_) => setState(() => _selectedCategory = cat),
-                  selectedColor: context.colors.primary.withValues(alpha: 0.2),
+                  onSelected: (_) =>
+                      setState(() => _selectedCategory = cat),
+                  selectedColor:
+                      context.colors.primary.withValues(alpha: 0.2),
                   labelStyle: TextStyle(
                     color: isSelected
                         ? context.colors.primary
@@ -189,7 +200,8 @@ class _TechniqueDetailPageState extends ConsumerState<TechniqueDetailPage> {
                 ),
                 child: const Text(
                   'Begin Session',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  style:
+                      TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
               ),
             ),

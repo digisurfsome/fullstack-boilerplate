@@ -16,17 +16,18 @@ class PractitionerHomeNotifier extends _$PractitionerHomeNotifier {
     final submodalityRepo = ref.read(submodalityRepositoryProvider);
     final techniqueRepo = ref.read(techniqueRepositoryProvider);
     final sessionRepo = ref.read(sessionRepositoryProvider);
-    final results = await Future.wait([
+    final (techniques, positiveProfile, negativeProfile, recentSessions) =
+        await (
       techniqueRepo.getAll(),
       submodalityRepo.getPositiveProfile(userId),
       submodalityRepo.getNegativeProfile(userId),
       sessionRepo.getUserSessions(userId),
-    ]);
+    ).wait;
     return PractitionerHomeState(
-      techniques: results[0] as dynamic,
-      positiveProfile: results[1] as dynamic,
-      negativeProfile: results[2] as dynamic,
-      recentSessions: results[3] as dynamic,
+      techniques: techniques,
+      positiveProfile: positiveProfile,
+      negativeProfile: negativeProfile,
+      recentSessions: recentSessions,
     );
   }
 }
